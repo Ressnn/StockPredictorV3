@@ -65,3 +65,13 @@ def Makebatches(dataset,number_of_splits):
         i = pd.DataFrame(i).transpose()
         new_dataset.append(np.vsplit(i,number_of_splits))
     return new_dataset
+
+def UndoDiff(data):
+    output = []
+    for i in data:
+        try:
+            output.append(i+output[-1])
+        except:
+            output.append(data[0])
+    return output
+    

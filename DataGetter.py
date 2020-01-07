@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Nov  3 20:19:25 2018
-
 @author: Pranav Devarinti
 """
 
 import csv
 import pandas_datareader.data as web
 from pytrends.request import TrendReq
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 import pandas as pd
-Minmax = MinMaxScaler(feature_range=(-1,1))
+import fix_yahoo_finance
+
+Minmax = StandardScaler()
 def Get_Data(tickers,start_date,end_date):
     pytrends = TrendReq(hl='en-US', tz=360)
     total_dates = start_date + ' ' + end_date
@@ -18,7 +19,7 @@ def Get_Data(tickers,start_date,end_date):
     panel_data = []
     trend_data = []
     for i in tickers:
-        panel_data.append(Minmax.fit_transform(web.DataReader(i, 'iex', start_date, end_date)).T)
+        panel_data.append(Minmax.fit_transform(web.get_data_yahoo(i, start_date, end_date)).T)
     for i in tickers:
         pytrends.build_payload([i], cat=0, timeframe=total_dates, geo='', gprop='')
         trend_data.append(Minmax.fit_transform(pytrends.interest_over_time()).T)
